@@ -8,7 +8,6 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Please Enter Name"],
     },
-
     email: {
         type: String,
         required: [true, "Please Enter Email"],
@@ -21,6 +20,11 @@ const schema = new mongoose.Schema({
         minLength: [6, "Password must be at least 6 characters long"],
         select: false,
     },
+    phoneNumber: {
+        type: Number,
+        required: true,
+        minLength: [11, "Phone Number must be 11"],
+    },
     address: {
         type: String,
         required: true,
@@ -31,13 +35,9 @@ const schema = new mongoose.Schema({
     },
     country: {
         type: String,
-        required: true,
+        required: false,
+        default: ["Egypt"]
     },
-    pinCode: {
-        type: Number,
-        required: true,
-    },
-
     role: {
         type: String,
         enum: ["admin", "user"],
