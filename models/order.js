@@ -14,7 +14,7 @@ const schema = new mongoose.Schema({
             type: String,
             required: true,
         },
-        pinCode: {
+        phoneNumber: {
             type: Number,
             required: true,
         },
