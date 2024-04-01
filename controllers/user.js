@@ -31,7 +31,7 @@ export const login = asyncError(async (req, res, next) => {
 
 // Signup Function
 export const signup = asyncError(async (req, res, next) => {
-    const { name, email, password, address, city, country, pinCode } = req.body;
+    const { name, email, password, phoneNumber, address, city, country } = req.body;
 
     let user = await User.findOne({ email });
 
@@ -53,10 +53,10 @@ export const signup = asyncError(async (req, res, next) => {
         name,
         email,
         password,
+        phoneNumber,
         address,
         city,
         country,
-        pinCode,
     });
 
     sendToken(user, res, `Registered Successfully`, 201);
@@ -89,14 +89,14 @@ export const getMyProfile = asyncError(async (req, res, next) => {
 export const updateProfile = asyncError(async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
-    const { name, email, address, city, country, pinCode } = req.body;
+    const { name, email, phoneNumber, address, city, country } = req.body;
 
     if (name) user.name = name;
     if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
     if (address) user.address = address;
     if (city) user.city = city;
     if (country) user.country = country;
-    if (pinCode) user.pinCode = pinCode;
 
     await user.save();
 
