@@ -110,11 +110,11 @@ export const proccessOrder = asyncError(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     if (!order) return next(new ErrorHandler("Order Not Found", 404));
 
-    if (order.orderStatus === "Preparing") order.orderStatus = "Shipped";
-    else if (order.orderStatus === "Shipped") {
-        order.orderStatus = "Delivered";
+    if (order.orderStatus === "Not Confirmed") order.orderStatus = "Verified";
+    else if (order.orderStatus === "Verified") {
+        order.orderStatus = "Confirmed";
         order.deliveredAt = new Date(Date.now());
-    } else return next(new ErrorHandler("Order Already Delivered", 400));
+    } else return next(new ErrorHandler("Order Already Confirmed", 400));
 
     await order.save();
 
