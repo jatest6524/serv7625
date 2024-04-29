@@ -25,7 +25,7 @@ import { Category } from "../models/category.js";
 export const getAllProducts = async (req, res) => {
     try {
         const { keyword, category } = req.query;
-        const perPage = parseInt(req.query.perPage) || 6; // Number of products per page
+        const perPage = parseInt(req.query.perPage); // Number of products per page
         const page = parseInt(req.query.page) || 1; // Current page number
 
         // Calculate the skip value based on the current page
