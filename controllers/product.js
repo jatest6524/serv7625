@@ -22,7 +22,7 @@ import { Category } from "../models/category.js";
 //     });
 // });
 
-exports.getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
     try {
         const { keyword, category } = req.query;
         const perPage = 2; // Number of products per page
