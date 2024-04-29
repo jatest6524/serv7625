@@ -23,33 +23,43 @@ import { Category } from "../models/category.js";
 // });
 
 export const getAllProducts = async (req, res) => {
-    try {
-        const { keyword, category } = req.query;
-        const perPage = parseInt(req.query.perPage); // Number of products per page
-        const page = parseInt(req.query.page) || 1; // Current page number
+  try {
+    const { keyword, category } = req.query;
+    const perPage = parseInt(req.query.perPage); // Number of products per page
+    const page = parseInt(req.query.page) || 1; // Current page number
 
-        // Calculate the skip value based on the current page
-        const skip = (page - 1) * perPage;
+    // Calculate the skip value based on the current page
+    const skip = (page - 1) * perPage;
 
-        // Query the database to get paginated products
-        const products = await Product.find({
-            name: {
-                $regex: keyword ? keyword : "",
-                $options: "i",
-            },
-            category: category ? category : undefined,
-        })
-            .skip(skip)
-            .limit(perPage)
-            .exec();
+    // Query the database to get paginated products
+    const [products, totalProducts] = await Promise.all([
+      Product.find({
+        name: {
+          $regex: keyword ? keyword : "",
+          $options: "i",
+        },
+        category: category ? category : undefined,
+      })
+        .skip(skip)
+        .limit(perPage)
+        .exec(),
+      Product.countDocuments({
+        name: {
+          $regex: keyword ? keyword : "",
+          $options: "i",
+        },
+        category: category ? category : undefined,
+      }),
+    ]);
 
-        res.status(200).json({
-            success: true,
-            products,
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching products', error });
-    }
+    res.status(200).json({
+      success: true,
+      products,
+      totalPages: Math.ceil(totalProducts / perPage), // Calculate total pages
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error });
+  }
 };
 
 export const getAdminProducts = asyncError(async (req, res, next) => {
