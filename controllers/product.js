@@ -5,22 +5,53 @@ import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
 import { Category } from "../models/category.js";
 
-export const getAllProducts = asyncError(async (req, res, next) => {
-    const { keyword, category } = req.query;
+// export const getAllProducts = asyncError(async (req, res, next) => {
+//     const { keyword, category } = req.query;
 
-    const products = await Product.find({
-        name: {
-            $regex: keyword ? keyword : "",
-            $options: "i",
-        },
-        category: category ? category : undefined,
-    });
+//     const products = await Product.find({
+//         name: {
+//             $regex: keyword ? keyword : "",
+//             $options: "i",
+//         },
+//         category: category ? category : undefined,
+//     });
 
-    res.status(200).json({
-        success: true,
-        products,
-    });
-});
+//     res.status(200).json({
+//         success: true,
+//         products,
+//     });
+// });
+
+exports.getAllProducts = async (req, res) => {
+    try {
+        const { keyword, category } = req.query;
+        const perPage = 2; // Number of products per page
+        const page = parseInt(req.query.page) || 1; // Current page number
+
+        // Calculate the skip value based on the current page
+        const skip = (page - 1) * perPage;
+
+        // Query the database to get paginated products
+        const products = await Product.find({
+            name: {
+                $regex: keyword ? keyword : "",
+                $options: "i",
+            },
+            category: category ? category : undefined,
+        })
+            .skip(skip)
+            .limit(perPage)
+            .exec();
+
+        res.status(200).json({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching products', error });
+    }
+};
+
 export const getAdminProducts = asyncError(async (req, res, next) => {
     const products = await Product.find({}).populate("category");
 
